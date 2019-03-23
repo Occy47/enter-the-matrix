@@ -1,10 +1,11 @@
 import React from "react";
-import Stream from "../Background/Stream";
+import "./App.css";
+import Rain from "../Background/Rain";
 
 const App = () => (
-  <div>
+  <div id="app">
     Enter the Matrix
-    <Stream />
+    <Rain />
   </div>
 );
 

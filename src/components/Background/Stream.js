@@ -10,8 +10,7 @@ class Stream extends Component {
     this.state = {
       numOfSym: null,
       symbols: [],
-      startPositionX: 20,
-      startPositionY: 0,
+      startPositionY: -20,
       speed: 20
     };
   }
@@ -24,11 +23,9 @@ class Stream extends Component {
     this.createSymbols();
 
     this.interval = setInterval(() => {
+      this.updateSymbols(this.state.symbols);
       this.updateYposition(this.state.startPositionY);
-      this.updateSymbols(this.state.symbols, this.state.startPositionY);
-    }, 2000);
-
-    console.log(this.state.symbols);
+    }, 300);
   }
 
   getRandomNumberOfSymbols() {
@@ -38,10 +35,13 @@ class Stream extends Component {
   }
 
   createSymbols() {
+    let startPosOfSymbol =
+      this.state.startPositionY - this.state.numOfSym * this.state.speed;
+
     for (let i = 0; i < this.state.numOfSym; i++) {
       let matrixSymbol = {
         positionX: null,
-        positionY: null,
+        positionY: (startPosOfSymbol += this.state.speed),
         char: ""
       };
       this.state.symbols.push(matrixSymbol);
@@ -49,26 +49,23 @@ class Stream extends Component {
   }
 
   updateYposition(posY) {
-    const initWindowHeight = window.innerHeight;
-    if (posY > initWindowHeight) {
-      this.setState({ startPositionY: 0 });
-    } else {
-      this.setState({
-        startPositionY: posY + this.state.speed
-      });
-    }
+    this.setState({
+      startPositionY: posY + this.state.speed
+    });
   }
 
-  updateSymbols(array, posY) {
+  updateSymbols(array) {
     array.forEach(element => {
       let ranChar = CHARS[Math.floor(Math.random() * 32)];
-      element.char = ranChar;
-      element.positionY = posY += this.state.speed;
-    });
 
-    console.log("number of symbols: " + this.state.numOfSym);
-    console.log("y start position: " + this.state.startPositionY);
-    console.log(this.state.symbols);
+      element.char = ranChar;
+
+      if (element.positionY >= window.innerHeight - 40) {
+        element.positionY = -20;
+      } else {
+        element.positionY = element.positionY += this.state.speed;
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -76,7 +73,8 @@ class Stream extends Component {
   }
 
   render() {
-    const { symbols, startPositionX } = this.state;
+    const { symbols } = this.state;
+    const { startPositionX } = this.props;
 
     return (
       <div>
